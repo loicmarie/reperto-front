@@ -1,0 +1,26 @@
+a {
+  color: hsl(0, 0%, 21%);
+}
+
+.move-notation {
+  color: hsl(0, 0%, 21%);
+}
+
+.move-selected {
+  font-weight: bold;
+  /*background-color: hsl(0, 0%, 54%);*/
+}
+
+li {
+  list-style-type: none;
+}
+
+li:before {
+  content: "\F148"; /* FontAwesome Unicode */
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-left: -1.3em;
+  width: 1.3em; /* same as padding-left set on li */
+  transform: rotate(90deg) translateY(6px) translateX(6px);
+  -webkit-transform: rotate(90deg) translateY(6px) translateX(6px);
+}

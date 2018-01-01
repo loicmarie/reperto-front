@@ -1,0 +1,138 @@
+<section class="section" *ngIf="auth.user">
+    <div class="columns">
+
+        <div class="column is-one-quarter">
+            <div *ngIf="variant" class="title-container">
+              <h2 class="title"><input [(ngModel)]="variant.name" class="editable-title title" placeholder="name"></h2>
+              <h3 class="subtitle">For {{ variant.color ? 'White' : 'Black' }}</h3>
+            </div>
+            <nav class="panel">
+                <p class="panel-heading">Variants</p>
+                <div class="panel-block">
+                    <p class="control has-icons-left">
+                      <input [(ngModel)]="nameFilter" class="input is-small" type="text" placeholder="search">
+                      <span class="icon is-small is-left">
+                        <i class="fa fa-search"></i>
+                      </span>
+                    </p>
+                  </div>
+                  <p class="panel-tabs">
+                    <a (click)="colorFilter = 'all'" [class.is-active]="colorFilter == 'all'">all</a>
+                    <a (click)="colorFilter = 'white'" [class.is-active]="colorFilter == 'white'">white</a>
+                    <a (click)="colorFilter = 'black'" [class.is-active]="colorFilter == 'black'">black</a>
+                  </p>
+                <a class="panel-block"
+                    *ngFor="let oneVariant of variants"
+                    [class.is-active]="oneVariant === variant"
+                    (click)="selectVariant(oneVariant)">
+                    <span class="panel-icon">
+                        <i
+                          class="fa"
+                          [class.fa-square-o]="oneVariant.color"
+                          [class.fa-square]="!oneVariant.color"></i>
+                    </span>
+                    {{oneVariant.name}}
+
+                </a>
+                <div class="panel-block">
+                    <button class="button-create-variant button is-link is-outlined is-fullwidth"
+                        (click)="addVariant()">
+
+                      <span>New</span>
+                      <span class="icon is-small">
+                        <i class="fa fa-plus-circle"></i>
+                      </span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- <button class="button is-info is-fullwidth is-medium" disabled>
+              <span class="icon is-small">
+                <i class="fa fa-upload"></i>
+              </span>
+              <span>Load PGN</span>
+              <input type="file" (change)="changeListener($event)">
+            </button> -->
+
+        </div>
+
+        <div *ngIf="variant" class="column is-three-quarters">
+          <div class="columns">
+            <app-chessboard class="column is-half"
+              (movePlayed)="setActiveMove($event); isNewMove($event) ? addMove($event) : ''"
+              [(fen)]="fen"
+              [flipped]="!variant.color"></app-chessboard>
+            <div class="column is-half">
+
+              <div class="widget">
+                <app-chess-notation-viewer
+                  [variant]="variant"
+                  [(activeMove)]="activeMove"></app-chess-notation-viewer>
+              </div>
+
+              <div class="card widget">
+                <div class="card-header">
+                  <p class="card-header-title">
+                    Settings
+                  </p>
+                </div>
+                <div class="card-content">
+                  <div class="content">
+
+                    <div class="field is-horizontal">
+                      <div class="field-label">
+                        <label class="label">Color</label>
+                      </div>
+                      <div class="field-body">
+                        <div class="field is-narrow">
+                          <div class="control">
+                            <label class="radio">
+                              <input type="radio" name="color-button" [(ngModel)]="variant.color" [value]=true [checked]="variant.color == variant.color">
+                              White
+                            </label>
+                            <label class="radio">
+                              <input type="radio" name="color-button" [(ngModel)]="variant.color" [value]=false>
+                              Black
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="columns">
+                <div class="column is-half">
+
+                  <button id="save-variant-button" class="button is-info is-fullwidth"
+                  [ngClass]="{'is-loading': isSaving}"
+                  (click)="updateVariant(variant)">
+                  <span>Save</span>
+                  <span class="icon is-small">
+                    <i class="fa fa-check"></i>
+                  </span>
+                </button>
+
+              </div>
+              <div class="column is-half">
+
+                <button id="delete-variant-button" class="button is-danger is-fullwidth"
+                (click)="deleteVariant(variant)">
+                <span>Delete</span>
+                <span class="icon is-small">
+                  <i class="fa fa-times"></i>
+                </span>
+              </button>
+
+            </div>
+          </div>
+
+
+            </div>
+            <!-- <app-variant-detail [variant]="selectedVariant" [user]="user"></app-variant-detail> -->
+          </div>
+        </div>
+    </div>
+</section>

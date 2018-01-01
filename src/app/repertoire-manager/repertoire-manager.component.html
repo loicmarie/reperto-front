@@ -1,0 +1,78 @@
+<section class="section" *ngIf="auth.user">
+    <div class="columns">
+
+        <div class="column is-one-quarter">
+            <div *ngIf="repertoire" class="title-container">
+              <h2 class="title"><input [(ngModel)]="repertoire.name" class="editable-title title" placeholder="name"></h2>
+              <h3 class="subtitle">For {{ repertoire.color ? 'White' : 'Black' }}</h3>
+            </div>
+            <nav class="panel">
+                <p class="panel-heading">Repertoires</p>
+                <div class="panel-block">
+                    <p class="control has-icons-left">
+                      <input [(ngModel)]="nameFilter" class="input is-small" type="text" placeholder="search">
+                      <span class="icon is-small is-left">
+                        <i class="fa fa-search"></i>
+                      </span>
+                    </p>
+                  </div>
+                  <p class="panel-tabs">
+                    <a (click)="colorFilter = 'all'" [class.is-active]="colorFilter == 'all'">all</a>
+                    <a (click)="colorFilter = 'white'" [class.is-active]="colorFilter == 'white'">white</a>
+                    <a (click)="colorFilter = 'black'" [class.is-active]="colorFilter == 'black'">black</a>
+                  </p>
+                <a class="panel-block"
+                    *ngFor="let oneRepertoire of repertoires"
+                    [class.is-active]="oneRepertoire === repertoire"
+                    (click)="selectRepertoire(oneRepertoire)">
+                    <span class="panel-icon">
+                        <i
+                          class="fa"
+                          [class.fa-square-o]="oneRepertoire.color"
+                          [class.fa-square]="!oneRepertoire.color"></i>
+                    </span>
+                    {{oneRepertoire.name}}
+
+                </a>
+                <div class="panel-block">
+                    <button class="button-create-repertoire button is-link is-outlined is-fullwidth"
+                        (click)="addRepertoire()">
+
+                      <span>New</span>
+                      <span class="icon is-small">
+                        <i class="fa fa-plus-circle"></i>
+                      </span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="columns">
+              <div class="column is-half">
+
+                <button id="save-repertoire-button" class="button is-info is-fullwidth"
+                  [ngClass]="{'is-loading': isSaving}"
+                  (click)="updateRepertoire(repertoire)">
+                    <span>Save</span>
+                    <span class="icon is-small">
+                        <i class="fa fa-check"></i>
+                    </span>
+                </button>
+
+              </div>
+              <div class="column is-half">
+
+                <button id="delete-repertoire-button" class="button is-danger is-fullwidth"
+                  (click)="deleteRepertoire(repertoire)">
+                    <span>Delete</span>
+                    <span class="icon is-small">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </button>
+
+              </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>

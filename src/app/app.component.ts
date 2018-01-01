@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
+    title = 'Reperto';
+    subtitle = 'Chess variant trainer';
+    constructor(private auth: AuthService) {
+      this.auth.handleAuthentication().subscribe(user => {
+        console.log(auth.user, auth.isAuthenticated());
+      }, error => {});
+    }
 }

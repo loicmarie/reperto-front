@@ -1,0 +1,45 @@
+
+<div class="card">
+  <div class="card-header">
+    <p class="card-header-title">
+      Moves
+    </p>
+  </div>
+  <div class="card-content">
+    <div class="content">
+
+      <ng-template #showMove let-move let-depth="depth">
+        <span>
+          <strong *ngIf="(depth+1) % 2 == 0">{{(depth+1)/2}}.</strong>
+          <a class="move-notation"
+            (click)="activeMove = variantService.moveObjectToInstance(move['value'])"
+            [class.move-selected]="activeMove ? (move.value['previousFEN'] == activeMove.previousFEN && move.key == activeMove.uciNotation) : false">
+            {{move.key}}
+          </a>
+          <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: variant.nodes[move.value['nextFEN']], 'depth': depth+1 }"></ng-container>
+        </span>
+      </ng-template>
+
+      <ng-template #recursiveList let-list let-depth="depth">
+        <span *ngIf="(list | keys).length <= 1">
+          <span *ngFor="let item of (list | keys)">
+            <ng-container *ngTemplateOutlet="showMove; context:{ $implicit: item, 'depth': depth }"></ng-container>
+          </span>
+        </span>
+        <ul [class.moves-list]="depth == 1" *ngIf="(list | keys).length > 1">
+          <li *ngFor="let item of (list | keys)">
+            <ng-container *ngTemplateOutlet="showMove; context:{ $implicit: item, 'depth': depth }"></ng-container>
+          </li>
+        </ul>
+      </ng-template>
+
+      <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: variant.nodes[startFEN], 'depth': 1 }"></ng-container>
+
+
+    </div>
+  </div>
+  <div class="card-footer">
+    <a (click)=setPreviousMove() class="button is-info card-footer-item"><i class="fa fa-chevron-left"></i></a>
+    <a (click)=setNextMove() class="button is-info card-footer-item"><i class="fa fa-chevron-right"></i></a>
+  </div>
+</div>

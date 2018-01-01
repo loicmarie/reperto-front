@@ -19,9 +19,17 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "../node_modules/font-awesome/css/font-awesome.min.css",
+        "../node_modules/bulma/css/bulma.css",
+        "assets/chessboardjs/css/chessboard-0.3.0.min.css",
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
+        "assets/chessboardjs/js/chess.js",
+        "assets/chessboardjs/js/chessboard-0.3.0.min.js",
+        "../node_modules/pgnToJSON/pgnParser.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+
+i {
+    font-family: FontAwesome !important;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: hsl(0, 0%, 98%);
+}
+
+section {
+    height: 100%;
+}

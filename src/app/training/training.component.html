@@ -1,0 +1,69 @@
+<section class="section" *ngIf="auth.user">
+    <div class="columns">
+
+        <div class="column is-one-quarter">
+
+            <div class="title-container">
+              <h2 class="title">Training</h2>
+              <!-- <h3 class="subtitle">For {{ repertoire.color ? 'White' : 'Black' }}</h3> -->
+            </div>
+
+            <div class="dropdown is-fullwidth" *ngIf="variant" [class.is-active]="isDropdown" (click)="isDropdown = !isDropdown">
+              <div class="dropdown-trigger is-fullwidth">
+                <button class="button is-fullwidth" aria-haspopup="true" aria-controls="dropdown-menu">
+                  <span>{{ variant.name }}</span>
+                  <span class="icon is-small">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  <a *ngFor="let oneVariant of auth.user.variants" class="dropdown-item"
+                    (click)="selectVariant(oneVariant)"
+                    [class.is-active]="oneVariant._id == variant._id">
+                    {{ oneVariant.name }}
+                  </a>
+                  <!-- <hr class="dropdown-divider"> -->
+                </div>
+              </div>
+            </div>
+
+            <button class="button is-primary is-fullwidth"
+              (click)="trainingSess.isSession ? trainingSess.reset() : trainingSess.run()">
+              <span class="icon is-small">
+                  <i class="fa" [class.fa-play]="!trainingSess.isSession" [class.fa-stop]="trainingSess.isSession"></i>
+              </span>
+              <span>{{ trainingSess.isSession ? 'Stop' : 'Start' }}</span>
+            </button>
+
+        </div>
+
+        <div class="column is-half" *ngIf="variant">
+          <app-chessboard #chessboard class="column"
+            (movePlayed)="trainingSess.humanPlayed($event)"
+            [fen]="trainingSess._fen"
+            [flipped]="!variant.color"></app-chessboard>
+        </div>
+
+        <div class="column is-one-quarter" *ngIf="variant">
+
+          <div class="card widget" *ngIf="trainingSess.moveAnalysis">
+            <div class="card-content">
+              <div class="content">
+                {{ trainingSess.moveAnalysis['isError'] ? 'Arf' : 'Yeah' }}
+                <button class="button is-info"
+                  *ngIf="trainingSess.moveAnalysis['isError']"
+                  (click)="trainingSess.reset()">
+                  <span>Continue</span>
+                  <span class="icon is-small">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+</section>
