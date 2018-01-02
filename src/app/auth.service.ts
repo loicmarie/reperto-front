@@ -16,7 +16,7 @@ export class AuthService {
     clientID: env.authClientId,
     domain: env.authDomain,
     responseType: 'token id_token',
-    audience: env.authDomain + '/userinfo',
+    audience: 'http://' + env.authDomain + '/userinfo',
     redirectUri: 'http://' + env.repertoDomain + ':' + env.repertoPort + '/',
     scope: 'openid profile'
   });
