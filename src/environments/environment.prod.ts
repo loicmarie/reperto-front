@@ -3,5 +3,5 @@ export const environment = {
   repertoDomain: '35.190.175.204',
   repertoPort: 80,
   authDomain: 'loicm.eu.auth0.com',
-  authClientId: 'vGOVyt6oMZ3oBqaCxUf1BBFbeAdfMP2G'
+  authClientId: 'inW69130Ta2LbqibDeqgVPkhrYKpE5SG'
 };
