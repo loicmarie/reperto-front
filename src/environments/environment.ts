@@ -4,5 +4,9 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  repertoDomain: 'localhost',
+  repertoPort: 4200,
+  authDomain: 'loicm.eu.auth0.com',
+  authClientId: 'vGOVyt6oMZ3oBqaCxUf1BBFbeAdfMP2G'
 };

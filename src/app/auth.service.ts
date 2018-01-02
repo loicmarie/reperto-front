@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/do';
+import { environment as env } from '../environments/environment';
 import * as auth0 from 'auth0-js';
 
 import { UserService } from './user.service';
@@ -12,11 +13,11 @@ import { User } from './user';
 export class AuthService {
 
   auth0 = new auth0.WebAuth({
-    clientID: 'vGOVyt6oMZ3oBqaCxUf1BBFbeAdfMP2G',
-    domain: 'loicm.eu.auth0.com',
+    clientID: env.authClientId,
+    domain: env.authDomain,
     responseType: 'token id_token',
-    audience: 'https://loicm.eu.auth0.com/userinfo',
-    redirectUri: 'http://localhost:4200/',
+    audience: env.authDomain + '/userinfo',
+    redirectUri: env.repertoDomain + env.repertoPort,
     scope: 'openid profile'
   });
 
@@ -56,7 +57,6 @@ export class AuthService {
                     });
               }
           }, error => {
-              console.log('yoh error', error);
           });
       });
     });
