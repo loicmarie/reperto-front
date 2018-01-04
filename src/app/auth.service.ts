@@ -37,20 +37,20 @@ export class AuthService {
       }
 
       this.auth0.client.userInfo(accessToken, (err, profile) => {
-        let anonymous: User = {
-          '_id': '',
-          'userId': profile.sub.split('|')[1],
-          'name': profile.name,
-          'nickname': profile.nickname,
-          'variants': []
-        };
+        let anonymous: User = new User(
+          '',
+          profile.name,
+          profile.nickname,
+          profile.sub.split('|')[1],
+          []
+        );
         return this.userService.getFromUserId(anonymous.userId)
-          .subscribe(user => {
-              if (user != null) {
-                  this.user = user;
-                  observer.next(user);
+          .subscribe(userObj => {
+              if (userObj != null) {
+                  this.user = User.fromObject(userObj);
+                  observer.next(this.user);
               } else {
-                  this.userService.create(anonymous)
+                  this.userService.create(User.fromObject(anonymous))
                     .subscribe(user => {
                       this.user = user;
                       observer.next(user);

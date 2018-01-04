@@ -28,7 +28,7 @@ export class TrainingComponent implements AfterViewInit {
 
   selectVariant(variant: Variant) {
     this.variant = variant;
-    this.trainingSess.reset();
+    this.trainingSess.stop();
     this.trainingSess.variant = variant;
   }
 

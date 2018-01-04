@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/map';
 import { User } from './user';
 import { AuthService } from './auth.service';
 
@@ -14,19 +15,20 @@ export class UserService {
     // CRUD
 
     list(): Observable<User[]> {
-        return this.http.get<User[]>(`/api/users/`);
+        return this.http.get<User[]>(`/api/users/`).map(users => users.map(user => User.fromObject(user)));
     }
 
     create(user: User): Observable<User> {
-        return this.http.post<User>(`/api/users/`, this.toDB(user));
+        return this.http.post<User>(`/api/users/`, user.toDB()).map(user => User.fromObject(user));
     }
 
     get(id: string): Observable<User> {
-        return this.http.get<User>(`/api/users/${id}`);
+        return this.http.get<Object>(`/api/users/${id}`).map(user => User.fromObject(user));
     }
 
     update(user: User): Observable<void> {
-        return this.http.post<void>(`/api/users/${user['_id']}`, this.toDB(user));
+        console.log('USER UPDT', user);
+        return this.http.post<void>(`/api/users/${user._id}`, user.toDB());
     }
 
     delete(user: User): Observable<void> {
@@ -35,18 +37,8 @@ export class UserService {
 
     // Utils
 
-    toDB(user: User): Object {
-        return {
-            '_id': user._id,
-            'name': user.name,
-            'nickname': user.nickname,
-            'userId': user.userId,
-            'variants': user.variants.map(variant => variant._id)
-        };
-    }
-
     getFromUserId(userId: string): Observable<User> {
-        return this.http.get<User>(`/api/users/uid/${userId}`);
+        return this.http.get<Object>(`/api/users/uid/${userId}`).map(user => User.fromObject(user));
     }
 
 }

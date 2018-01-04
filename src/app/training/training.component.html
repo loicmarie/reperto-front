@@ -1,69 +1,173 @@
 <section class="section" *ngIf="auth.user">
+
     <div class="columns">
 
         <div class="column is-one-quarter">
 
             <div class="title-container">
               <h2 class="title">Training</h2>
-              <!-- <h3 class="subtitle">For {{ repertoire.color ? 'White' : 'Black' }}</h3> -->
+              <h3 class="subtitle" *ngIf="variant">{{ variant.name }}</h3>
             </div>
 
-            <div class="dropdown is-fullwidth" *ngIf="variant" [class.is-active]="isDropdown" (click)="isDropdown = !isDropdown">
-              <div class="dropdown-trigger is-fullwidth">
-                <button class="button is-fullwidth" aria-haspopup="true" aria-controls="dropdown-menu">
-                  <span>{{ variant.name }}</span>
-                  <span class="icon is-small">
-                    <i class="fa fa-angle-down" aria-hidden="true"></i>
-                  </span>
-                </button>
-              </div>
-              <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                <div class="dropdown-content">
-                  <a *ngFor="let oneVariant of auth.user.variants" class="dropdown-item"
-                    (click)="selectVariant(oneVariant)"
-                    [class.is-active]="oneVariant._id == variant._id">
-                    {{ oneVariant.name }}
-                  </a>
-                  <!-- <hr class="dropdown-divider"> -->
-                </div>
-              </div>
-            </div>
-
-            <button class="button is-primary is-fullwidth"
-              (click)="trainingSess.isSession ? trainingSess.reset() : trainingSess.run()">
-              <span class="icon is-small">
-                  <i class="fa" [class.fa-play]="!trainingSess.isSession" [class.fa-stop]="trainingSess.isSession"></i>
-              </span>
-              <span>{{ trainingSess.isSession ? 'Stop' : 'Start' }}</span>
-            </button>
-
+            <table class="table is-fullwidth">
+              <tbody>
+                <tr>
+                  <td><strong>Discovery</strong></td>
+                  <td>{{ 100 * trainingSess.discoverRate | number : '1.0-0' }}%</td>
+                </tr>
+                <tr>
+                  <td colspan=2><progress class="progress is-info" value="{{ 100 * trainingSess.discoverRate | number : '1.0-0' }}" max="100">45%</progress></td>
+                </tr>
+                <tr>
+                  <td><strong>Correctness</strong></td>
+                  <td>{{ 100 * trainingSess.correctnessRate | number : '1.0-0' }}%</td>
+                </tr>
+                <tr>
+                  <td colspan=2><progress class="progress is-info" value="{{ 100 * trainingSess.correctnessRate | number : '1.0-0' }}" max="100">45%</progress></td>
+                </tr>
+              </tbody>
+            </table>
         </div>
 
         <div class="column is-half" *ngIf="variant">
-          <app-chessboard #chessboard class="column"
+          <app-chessboard #chessboard
             (movePlayed)="trainingSess.humanPlayed($event)"
+            [draggable]="trainingSess.isSession && !trainingSess.isStopped"
             [fen]="trainingSess._fen"
             [flipped]="!variant.color"></app-chessboard>
         </div>
 
         <div class="column is-one-quarter" *ngIf="variant">
 
-          <div class="card widget" *ngIf="trainingSess.moveAnalysis">
-            <div class="card-content">
-              <div class="content">
-                {{ trainingSess.moveAnalysis['isError'] ? 'Arf' : 'Yeah' }}
-                <button class="button is-info"
-                  *ngIf="trainingSess.moveAnalysis['isError']"
-                  (click)="trainingSess.reset()">
-                  <span>Continue</span>
-                  <span class="icon is-small">
-                    <i class="fa fa-arrow-circle-o-right"></i>
-                  </span>
-                </button>
+          <div class="dropdown is-fullwidth widget" *ngIf="variant" [class.is-active]="isDropdown" (click)="isDropdown = !isDropdown">
+            <div class="dropdown-trigger is-fullwidth">
+              <button class="button is-medium is-fullwidth" aria-haspopup="true" aria-controls="dropdown-menu">
+                <span>{{ variant.name }}</span>
+                <span class="icon is-small">
+                  <i class="fa fa-angle-down" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+              <div class="dropdown-content">
+                <a *ngFor="let oneVariant of auth.user.variants" class="dropdown-item"
+                  (click)="selectVariant(oneVariant)"
+                  [class.is-active]="oneVariant._id == variant._id">
+                  {{ oneVariant.name }}
+                </a>
+                <!-- <hr class="dropdown-divider"> -->
               </div>
             </div>
           </div>
+
+          <div class="widget has-text-centered">
+
+            <div *ngIf="trainingSess.isSession">
+
+              <div *ngIf="trainingSess.isStopped">
+
+                <button class="button is-info is-large is-fullwidth"
+                  (click)="trainingSess.continue()">
+                  <span class="icon is-small">
+                      <i class="fa fa-fast-forward"></i>
+                  </span>
+                  <span>Continue</span>
+                </button>
+
+              </div>
+
+              <div *ngIf="!trainingSess.isStopped">
+
+                <button class="button is-dark is-large is-fullwidth"
+                  (click)="trainingSess.stop()">
+                  <span class="icon is-small">
+                      <i class="fa fa-stop"></i>
+                  </span>
+                  <span>Stop</span>
+                </button>
+
+              </div>
+
+            </div>
+
+            <div *ngIf="!trainingSess.isSession">
+
+              <button class="button is-primary is-large is-fullwidth"
+                (click)="trainingSess.run()">
+                <span class="icon is-small">
+                    <i class="fa fa-play"></i>
+                </span>
+                <span>Start</span>
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="analysis-container has-text-centered" *ngIf="trainingSess.moveAnalysis">
+
+                <div *ngIf="!trainingSess.moveAnalysis['isError']">
+                  <div class="widget">
+                    <span class="is-size-1">{{ trainingSess.lastHumanMove.fromToNotation }} &nbsp;</span>
+                    <span class="icon is-large has-text-primary">
+                      <i class="fa fa-check fa-5x"></i>
+                    </span>
+                    <span class="is-size-3" *ngIf="trainingSess.lastHumanMove">
+                      ({{100*
+                      trainingSess.variant.nodes[trainingSess.lastHumanMove.previousFEN][trainingSess.lastHumanMove.uciNotation]['analysis']['nbSuccess']
+                      / trainingSess.variant.nodes[trainingSess.lastHumanMove.previousFEN][trainingSess.lastHumanMove.uciNotation]['analysis']['nbVisits']
+                      | number : '1.0-0'}}%)</span>
+                  </div>
+                  <!-- <div class="card">
+                    <div class="card-content">
+                      <div class="content">
+                        <span>OK !</span>
+                      </div>
+                    </div>
+                  </div> -->
+                </div>
+
+                <div *ngIf="trainingSess.solution">
+                  <div class="widget">
+                    <span class="is-size-1">{{ trainingSess.lastHumanMove.fromToNotation }} &nbsp;</span>
+                    <span class="icon is-large has-text-danger">
+                      <i class="fa fa-times fa-5x"></i>
+                    </span>
+                  </div>
+                  <div class="is-size-3" *ngIf="trainingSess.solution">
+                        <span>Move was:</span><br/>
+                        <span><strong>{{ trainingSess.solution.fromToNotation }}</strong></span>
+                        <span>({{100*
+                          trainingSess.variant.nodes[trainingSess.solution.previousFEN][trainingSess.solution.uciNotation]['analysis']['nbSuccess']
+                          / trainingSess.variant.nodes[trainingSess.solution.previousFEN][trainingSess.solution.uciNotation]['analysis']['nbVisits']
+                          | number : '1.0-0'}}%)</span>
+                  </div>
+                </div>
+
+                <div class="card has-text-centered" *ngIf="trainingSess.isSession && trainingSess.isEnd()
+                  && !trainingSess.moveAnalysis['isError']">
+                  <div class="card-content">
+                    <div class="content">
+
+                      <span class="is-size-4">
+                        Variant <span class="has-text-success">cleared</span> !<br/>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+          </div>
+
         </div>
 
     </div>
+
+    <app-chess-notation-viewer
+      *ngIf="trainingSess.variant"
+      [hidden]="!trainingSess.isSession"
+      [variant]="trainingSess.variant"
+      [activeMove]="trainingSess.lastHumanMove"
+      [showNextMoves]="trainingSess.isStopped"
+      [analysisMode]="true"
+      [editMode]="false"></app-chess-notation-viewer>
 </section>

@@ -5,3 +5,27 @@
 .dropdown, .dropdown-trigger {
   width: 100%;
 }
+
+.title-container {
+  padding: 0 0 40px 0;
+}
+
+.widget {
+  padding: 0 0 20px 0;
+}
+
+.answer-valid {
+  background-color: hsl(171, 100%, 41%);
+}
+
+.answer-error {
+  background-color: hsl(348, 100%, 61%);
+}
+
+table {
+  background-color: transparent;
+}
+
+.analysis-container {
+  margin: 50px 0 0 0;
+}

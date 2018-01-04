@@ -42,15 +42,4 @@ export class VariantService {
         return this.http.post<Variant>(`/api/variants/`, new Variant());
     }
 
-    moveObjectToInstance(move: Object): Move {
-      return new Move(
-        move['from'],
-        move['to'],
-        move['comment'],
-        move['promotion'],
-        move['previousFEN'],
-        move['nextFEN']
-      );
-    }
-
 }

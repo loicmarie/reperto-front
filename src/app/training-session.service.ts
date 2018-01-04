@@ -3,7 +3,9 @@ import { Observable } from 'rxjs/Observable';
 import { VariantService } from './variant.service';
 import { ChessSettings } from './chess.settings';
 import { Variant } from './variant';
+import { TrainingSessionVariant } from './training-session-variant';
 import { Move } from './move';
+import { TrainingSessionMove } from './training-session-move';
 import { ChessboardComponent } from './chessboard/chessboard.component';
 
 
@@ -14,9 +16,15 @@ export class TrainingSessionService {
 
   chessboard: ChessboardComponent;
   isSession: Boolean = false;
+  isStopped: Boolean = true;
   variant: Variant;
+  played: TrainingSessionVariant = new TrainingSessionVariant();
   moveAnalysis: Object;
   previousMove: Move;
+  lastHumanMove: Move;
+  solution: Move;
+  discoverRate: number = 0;
+  correctnessRate: number = 0;
   _lastMove: Move = this.startMove;
   _fen: string = this.startMove.nextFEN;
 
@@ -26,101 +34,147 @@ export class TrainingSessionService {
     this.chessboard = chessboard;
   }
 
-  init() {
+  reset() {
+    this.lastMove = this.startMove;
+    this.isStopped = false;
+    this.moveAnalysis = undefined;
+    this.solution = undefined;
   }
 
-  reset() {
+  continue() {
+    this.reset();
+    if (this.isEnd()) {
+      this.isStopped = true;
+      return;
+    }
+    if (!this.variant.color)
+      this.computeNextMove();
+  }
+
+  stop() {
+    this.reset();
     this.isSession = false;
-    this.lastMove = this.startMove;
   }
 
   run() {
+    this.played = new TrainingSessionVariant();
+    this.played.color = this.variant.color;
+
     this.isSession = true;
+    this.isStopped = false;
+
+    if (this.isEnd()) {
+      this.isStopped = true;
+      return;
+    }
+
     if (this.isSession) {
-      if (!this.variant.color)
+      if (!this.variant.color) {
         this.computeNextMove();
+      }
     } else {
       this.lastMove = this.startMove;
     }
   }
 
-  isError() {
-    return !this.variant.nodes.hasOwnProperty(this._lastMove.nextFEN);
+  isEnd() {
+    return Object.keys(this.variant.nodes).length == 1
+      || Object.keys(this.variant.nodes[this._fen]).length == 0;
+  }
+
+  isError(move: Move) {
+    return !this.variant.nodes.hasOwnProperty(move.nextFEN);
   }
 
   computeNextMove() {
-    console.log(this.variant.nodes);
     let moves = Object.keys(this.variant.nodes[this._lastMove.nextFEN]);
     let moveNot = moves[Math.floor(Math.random()*moves.length)];
     let moveObj = this.variant.nodes[this._lastMove.nextFEN][moveNot];
     this.previousMove = this._lastMove;
-    let move = this.variantService.moveObjectToInstance(moveObj);
-    // this.chessboard.play(move);
+    let move: Move = Move.fromObject(moveObj);
     this.lastMove = move;
+    // if (this.isEnd())
+    //   this.continue();
   }
 
   humanPlayed(move: Move) {
-    console.log('human', move);
-    this.lastMove = move;
-    setTimeout(() => {
+    // if (this.isEnd()) {
+    //   this.lastHumanMove = move;
+    //   this.lastMove = move;
+    //
+    //   this.isStopped = true;
+    //   this.updateDiscoverRate();
+    //   this.updateCorrectnessRate();
+    //   return;
+    // }
+    this.analyzeMove(move);
+    if (this.moveAnalysis['isError']) {
+      this.lastHumanMove = move;
 
-      console.log('humantoplay:', this.isHumanToPlay());
-      if (this.isSession && !this.isHumanToPlay()) {
-        this.moveAnalysis = {
-          'isError': this.isError(),
-          'played': this._lastMove.fromToNotation,
-          'moves': Object.keys(this.variant.nodes[this._lastMove.previousFEN])
+      this.handleVariantError(move);
+      // let moveObj = this.variant.nodes[this._lastMove.previousFEN][this._lastMove.uciNotation];
+      if (this.variant.nodes[this._lastMove.previousFEN][this._lastMove.uciNotation].hasOwnProperty('analysis'))
+        this.variant.nodes[this._lastMove.previousFEN][this._lastMove.uciNotation]['analysis']['nbVisits']++;
+      else
+        this.variant.nodes[this._lastMove.previousFEN][this._lastMove.uciNotation]['analysis'] = {
+          'nbVisits': 1,
+          'nbSuccess': 0
         };
-        if (this.moveAnalysis['isError']) {
-          console.log('ERROR', this.chessboard.fen, this.fen, this.lastMove.nextFEN, this.previousMove.nextFEN);
-          this.lastMove = new Move(
-            '',
-            '',
-            '',
-            '',
-            '',
-            this.previousMove.nextFEN
-          );
-          // rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq d3 0 2
-          console.log('fen changed', this.fen, 'waited',
-          'rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq -');
-          // this.lastMove = new Move(
-          //   this.previousMove.from, this.previousMove.to, '', '', this.previousMove.previousFEN, this.previousMove.nextFEN);
-          // this.chessboard.setPosition(this.lastMove.nextFEN);
-          setTimeout(() => {
-            this.computeNextMove();
-          }, 500);
-        } else {
-          console.log('computeNextMove');
-          this.computeNextMove();
-        }
+    } else {
+      // let moveObj = this.variant.nodes[move.previousFEN][move.uciNotation];
+      this.lastMove = Move.fromObject(this.variant.nodes[move.previousFEN][move.uciNotation]);
+
+      if (this.variant.nodes[move.previousFEN][move.uciNotation].hasOwnProperty('analysis')) {
+        this.variant.nodes[move.previousFEN][move.uciNotation]['analysis']['nbVisits']++;
+        this.variant.nodes[move.previousFEN][move.uciNotation]['analysis']['nbSuccess']++;
+      } else
+        this.variant.nodes[move.previousFEN][move.uciNotation]['analysis'] = {
+          'nbVisits': 1,
+          'nbSuccess': 1
+        };
+      this.lastHumanMove = this.lastMove;
+      if (this.isEnd()) {
+        this.isStopped = true;
+        this.updateDiscoverRate();
+        this.updateCorrectnessRate();
+        return;
       }
-    }, 200);
+      this.computeNextMove();
+    }
+    this.updateDiscoverRate();
+    this.updateCorrectnessRate();
+
+    if (this.isEnd()) {
+      this.isStopped = true;
+      return;
+    }
+  }
+
+  analyzeMove(move: Move) {
+    this.moveAnalysis = {
+      'isError': this.isError(move),
+      'played': move.fromToNotation
+      // 'moves': Object.keys(this.variant.nodes[this._lastMove.previousFEN])
+    };
+  }
+
+  handleVariantError(move: Move) {
+    this.computeNextMove();
+    this.solution = this.lastMove;
+    this.isStopped = true;
   }
 
   isHumanToPlay(): Boolean {
     return this.chessboard.colorToPlay == this.variant.color;
   }
 
-  showWaitedMove(from: string): Observable<void> {
-    return new Observable<void>(observer => {
-      console.log('UNDO', this.previousMove);
-      this.lastMove = this.previousMove;
-      observer.next();
-      // this.chessboard.play(move);
-      // setTimeout(() => {
-      //   observer.next();
-      //   // this.chessboard.play
-      // }, 3000);
-    });
-  }
-
   set lastMove(value: Move) {
     this.previousMove = this._lastMove;
     this._lastMove = value;
-    console.log('LAST', this.fen, value.nextFEN);
     this.fen = value.nextFEN;
-    console.log('set.lastMove', this.previousMove, this._lastMove);
+    if (this.isSession && !this.isStopped) {
+      this.played.addMove(value);
+    }
   }
 
   get lastMove(): Move {
@@ -136,29 +190,33 @@ export class TrainingSessionService {
     return this._fen;
   }
 
-  // set lastMove(value: Move) {
-  //   if (value != this._lastMove) {
-  //     this.previousMove = this._lastMove;
-  //     this._lastMove = value;
-  //     this.fen = this._lastMove.nextFEN;
-  //     console.log('set new move', value, this.previousMove, this._lastMove);
-  //     if (this.isSession && this.chessboard.colorToPlay != this.variant.color) {
-  //       this.moveAnalysis = {
-  //         'isError': this.isError(),
-  //         'played': this._lastMove.fromToNotation,
-  //         'moves': Object.keys(this.variant.nodes[this._lastMove.previousFEN])
-  //       };
-  //       if (this.moveAnalysis['isError']) {
-  //         this.isSession = false;
-  //         console.log('TEST', this.lastMove.nextFEN, this.previousMove.nextFEN);
-  //         this.lastMove = this.previousMove;
-  //         // this.showWaitedMove(this.moveAnalysis['moves']).subscribe(() => {
-  //         //   // this.reset();
-  //         // });
-  //       } else
-  //         this.computeNextMove();
-  //     }
-  //   }
-  // }
+  updateDiscoverRate() {
+    let visited = [];
+    let nbDiscovered = 0,
+        nbTotal = 0;
+    for (let variantFEN in this.variant.nodes) {
+      for (let moveUCI in this.variant.nodes[variantFEN]) {
+        if (this.variant.nodes[variantFEN][moveUCI].hasOwnProperty('analysis'))
+          nbDiscovered++;
+        nbTotal++;
+      }
+    }
+    this.discoverRate = nbTotal == 0 ? 1 : nbDiscovered/nbTotal;
+  }
+
+  updateCorrectnessRate() {
+    let visited = [];
+    let nbDiscovered = 0,
+        nbTotal = 0;
+    for (let variantFEN in this.variant.nodes) {
+      for (let moveUCI in this.variant.nodes[variantFEN]) {
+        if (this.variant.nodes[variantFEN][moveUCI].hasOwnProperty('analysis'))
+          nbDiscovered += this.variant.nodes[variantFEN][moveUCI]['analysis']['nbSuccess']
+            / this.variant.nodes[variantFEN][moveUCI]['analysis']['nbVisits'];
+        nbTotal++;
+      }
+    }
+    this.correctnessRate = nbTotal == 0 ? 1 : nbDiscovered/nbTotal;
+  }
 
 }

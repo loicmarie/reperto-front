@@ -13,6 +13,9 @@ export class ChessNotationViewerComponent implements OnInit {
 
   @Output() activeMoveChange: EventEmitter<Move> = new EventEmitter<Move>();
   @Input() variant: Variant;
+  @Input() editMode: Boolean = true;
+  @Input() analysisMode: Boolean = false;
+  @Input() showNextMoves: Boolean = true;
   previousMove: Move;
   private _activeMove: Move;
 
@@ -34,6 +37,10 @@ export class ChessNotationViewerComponent implements OnInit {
     return this._activeMove;
   }
 
+  setActiveMoveFromObject(moveObj: Object) {
+    this.activeMove = Move.fromObject(moveObj);
+  }
+
   get startFEN(): string {
     return ChessSettings.START_FEN;
   }
@@ -44,7 +51,7 @@ export class ChessNotationViewerComponent implements OnInit {
     let nodes = this.variant.nodes;
     let moves = Object.keys(nodes[this._activeMove.nextFEN]);
     if (moves.length != 0)
-      this.activeMove = this.variantService.moveObjectToInstance(nodes[this._activeMove.nextFEN][moves[0]]);
+      this.activeMove = Move.fromObject(nodes[this._activeMove.nextFEN][moves[0]]);
   }
 
   setPreviousMove() {
@@ -56,7 +63,12 @@ export class ChessNotationViewerComponent implements OnInit {
       }
     }
     if (moves.length != 0)
-      this.activeMove = this.variantService.moveObjectToInstance(moves[0]);
+      this.activeMove = Move.fromObject(moves[0]);
+  }
+
+  deleteMove() {
+    this.variant.deleteMove(this.activeMove);
+    this.setPreviousMove();
   }
 
   ngOnInit() {

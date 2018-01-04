@@ -1,5 +1,5 @@
 
-<div class="card">
+<div class="card notation-content">
   <div class="card-header">
     <p class="card-header-title">
       Moves
@@ -12,24 +12,33 @@
         <span>
           <strong *ngIf="(depth+1) % 2 == 0">{{(depth+1)/2}}.</strong>
           <a class="move-notation"
-            (click)="activeMove = variantService.moveObjectToInstance(move['value'])"
+            (click)="editMode ? setActiveMoveFromObject(move['value']) : undefined"
             [class.move-selected]="activeMove ? (move.value['previousFEN'] == activeMove.previousFEN && move.key == activeMove.uciNotation) : false">
             {{move.key}}
           </a>
-          <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: variant.nodes[move.value['nextFEN']], 'depth': depth+1 }"></ng-container>
+          <span *ngIf="move.value['analysis']">
+            ({{100*move.value['analysis']['nbSuccess']/move.value['analysis']['nbVisits']  | number : '1.0-0'}}%)
+          </span>
+          <span *ngIf="(activeMove ? (move.value['previousFEN'] == activeMove.previousFEN && move.key == activeMove.uciNotation) : false) ? showNextMoves : true">
+            <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: variant.nodes[move.value['nextFEN']], 'depth': depth+1 }"></ng-container>
+          </span>
         </span>
       </ng-template>
 
       <ng-template #recursiveList let-list let-depth="depth">
         <span *ngIf="(list | keys).length <= 1">
           <span *ngFor="let item of (list | keys)">
-            <ng-container *ngTemplateOutlet="showMove; context:{ $implicit: item, 'depth': depth }"></ng-container>
+            <ng-container *ngIf="(analysisMode && ((depth+1) % 2 == 0) == this.variant.color) ? (item.value['analysis'] && item.value['analysis']['nbVisits'] != 0) : true">
+              <ng-container *ngTemplateOutlet="showMove; context:{ $implicit: item, 'depth': depth }"></ng-container>
+            </ng-container>
           </span>
         </span>
         <ul [class.moves-list]="depth == 1" *ngIf="(list | keys).length > 1">
-          <li *ngFor="let item of (list | keys)">
-            <ng-container *ngTemplateOutlet="showMove; context:{ $implicit: item, 'depth': depth }"></ng-container>
-          </li>
+          <ng-container *ngFor="let item of (list | keys)">
+            <li *ngIf="(analysisMode && ((depth+1) % 2 == 0) == this.variant.color) ? (item.value['analysis'] && item.value['analysis']['nbVisits'] != 0) : true">
+              <ng-container *ngTemplateOutlet="showMove; context:{ $implicit: item, 'depth': depth }"></ng-container>
+            </li>
+          </ng-container>
         </ul>
       </ng-template>
 
@@ -38,8 +47,22 @@
 
     </div>
   </div>
-  <div class="card-footer">
+  <div class="card-footer" *ngIf="editMode">
     <a (click)=setPreviousMove() class="button is-info card-footer-item"><i class="fa fa-chevron-left"></i></a>
     <a (click)=setNextMove() class="button is-info card-footer-item"><i class="fa fa-chevron-right"></i></a>
+  </div>
+</div>
+
+<div class="control-buttons columns" *ngIf="editMode">
+  <div class="column is-half">
+    <button class="button is-fullwidth"
+      (click)="deleteMove()">
+      Delete moves
+    </button>
+  </div>
+  <div class="column is-half">
+    <button class="button is-fullwidth" disabled>
+      Set tabia
+    </button>
   </div>
 </div>

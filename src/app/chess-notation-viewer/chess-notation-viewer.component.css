@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+
 a {
   color: hsl(0, 0%, 21%);
 }
@@ -24,3 +26,13 @@ li:before {
   transform: rotate(90deg) translateY(6px) translateX(6px);
   -webkit-transform: rotate(90deg) translateY(6px) translateX(6px);
 }
+
+.card-content {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.notation-content {
+  margin: 0 0 20px 0;
+}
+
+.control-buttons {}

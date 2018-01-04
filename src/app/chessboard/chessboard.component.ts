@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, EventEmitter, Input, Output } from '@angular/core';
+import { Component, HostListener, EventEmitter, Input, Output } from '@angular/core';
 import { Move } from '../move';
 
 @Component({
@@ -6,11 +6,12 @@ import { Move } from '../move';
   templateUrl: './chessboard.component.html',
   styleUrls: ['./chessboard.component.css']
 })
-export class ChessboardComponent implements OnInit {
+export class ChessboardComponent {
 
   @Output() movePlayed = new EventEmitter<Move>();
   @Output() fenChange = new EventEmitter<string>();
 
+  _draggable: Boolean = true;
   game: any = new Chess();
   board: any;
   move: Move;
@@ -38,9 +39,7 @@ export class ChessboardComponent implements OnInit {
 
   @Input('fen')
   set fen(value: string) {
-    console.log('chessboard.set.fen', value);
     this._fen = value;
-    // this.fenChange.emit(this._fen);
     if (this.board) {
       this.setPosition(this._fen);
     }
@@ -50,12 +49,18 @@ export class ChessboardComponent implements OnInit {
     return this._fen;
   }
 
-  get colorToPlay(): Boolean {
-    return this.game.turn() == 'w'
+  @Input('draggable')
+  set draggable(value: Boolean) {
+    this._draggable = value;
+    this.loadChessboard();
   }
 
-  ngOnInit() {
+  get draggable(): Boolean {
+    return this._draggable;
+  }
 
+  get colorToPlay(): Boolean {
+    return this.game.turn() == 'w'
   }
 
   @HostListener('window:resize', ['$event'])
@@ -67,6 +72,21 @@ export class ChessboardComponent implements OnInit {
 
 
   // UTILS
+
+  loadChessboard() {
+      let cfg = {
+        draggable: this._draggable,
+        position: this._fen,
+        onDragStart: this.onDragStart.bind(this),
+        onDrop: this.onDrop.bind(this),
+        onMouseoutSquare: this.onMouseoutSquare.bind(this),
+        onMouseoverSquare: this.onMouseoverSquare.bind(this),
+        onChange: this.onChange.bind(this),
+        onSnapEnd: this.onSnapEnd.bind(this),
+        orientation: this._flipped ? 'black' : 'white'
+      };
+      this.board = ChessBoard('board', cfg);
+  }
 
   play(move: Move) {
     this.move = move;
@@ -160,38 +180,14 @@ export class ChessboardComponent implements OnInit {
     this.board.position(this.game.fen());
   }
 
-  onChange(oldState: string, newState: string) {
-    // console.log('CHANGE but no move !');
-    // if (this.move) {
-    //   console.log('emit yolo');
-    //   this.move.previousFEN = this._fen;
-    //   console.log('fen from', this._fen, 'to', this.game.fen());
-    //   this.move.nextFEN = this.game.fen(); // ChessBoard.objToFen(newState);
-    //   this._fen = this.move.nextFEN;
-    //   // this.fenChange.emit(this._fen);
-    //   this.movePlayed.emit(this.move);
-    //   this.move = undefined;
-    // }
-  }
+  onChange(oldState: string, newState: string) {}
 
 
 
   // HOOKS
 
   ngAfterViewInit() {
-
-    let cfg = {
-      draggable: true,
-      position: 'start',
-      onDragStart: this.onDragStart.bind(this),
-      onDrop: this.onDrop.bind(this),
-      onMouseoutSquare: this.onMouseoutSquare.bind(this),
-      onMouseoverSquare: this.onMouseoverSquare.bind(this),
-      onChange: this.onChange.bind(this),
-      onSnapEnd: this.onSnapEnd.bind(this),
-      orientation: this._flipped ? 'black' : 'white'
-    };
-    this.board = ChessBoard('board', cfg);
+    this.loadChessboard();
   }
 
 }

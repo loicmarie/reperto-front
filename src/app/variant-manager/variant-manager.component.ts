@@ -28,6 +28,10 @@ export class VariantManagerComponent implements OnInit {
     _nameFilter: string = '';
     _activeMove: Move = this.startMove;
 
+    isSaving: Boolean = false;
+    isAdding: Boolean = false;
+    isDeleting: Boolean = false;
+
     constructor(private userService: UserService,
       private auth: AuthService,
       private variantService: VariantService) {
@@ -76,7 +80,7 @@ export class VariantManagerComponent implements OnInit {
 
     selectVariant(variant: Variant) {
       this.variant = variant;
-      this.fen = ChessSettings.START_FEN;
+      // this.fen = ChessSettings.START_FEN;
       console.log('new active move:', this.startMove);
       this.activeMove = this.startMove;
     }
@@ -84,40 +88,32 @@ export class VariantManagerComponent implements OnInit {
     addVariant() {
       this.variantService.new().subscribe(variant => {
         this.auth.user.variants.push(variant);
-        this.userService.update(this.auth.user).subscribe(() =>
-          this.listVariants()
-        );
+        this.userService.update(this.auth.user).subscribe(() => {
+          this.listVariants();
+        });
       });
     }
 
     deleteVariant() {
+      this.isDeleting = true;
       this.variantService.delete(this.variant).subscribe(() => {
         this.auth.user.variants.splice(this.auth.user.variants.indexOf(this.variant),1);
-        this.userService.update(this.auth.user).subscribe(() =>
+        this.userService.update(this.auth.user).subscribe(() => {
           this.listVariants()
-        );
+          setTimeout(() => {
+            this.isDeleting = false;
+          }, 500);
+        });
       });
     }
 
     updateVariant() {
-      this.variantService.update(this.variant).subscribe();
-    }
-
-    addMove(move: Move) {
-      let extanded = {
-        [move.previousFEN]: {
-          [move.uciNotation]: {
-            'to': move.to,
-            'from': move.from,
-            'nextFEN': move.nextFEN,
-            'previousFEN': move.previousFEN,
-            'comment': move.comment
-          }
-        },
-        [move.nextFEN]: {}
-      };
-      if (!this.variant.nodes.hasOwnProperty(move.nextFEN))
-        this.variant.nodes = $.extend(true, extanded, this.variant.nodes);
+      this.isSaving = true;
+      this.variantService.update(this.variant).subscribe(() =>
+        setTimeout(() => {
+          this.isSaving = false
+        }, 500)
+      );
     }
 
     isNewMove(move: Move) {
@@ -125,6 +121,13 @@ export class VariantManagerComponent implements OnInit {
     }
 
     // EVENTS
+
+    handleMovePlayed(move: Move) {
+      this.setActiveMove(move);
+      console.log(this.variant);
+      if (this.isNewMove(move))
+        this.variant.addMove(move);
+    }
 
     filterVariants() {
       if (this._colorFilter == 'all')

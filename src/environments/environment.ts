@@ -6,7 +6,7 @@
 export const environment = {
   production: false,
   repertoDomain: 'localhost',
-  repertoPort: 3000,
+  repertoPort: 4200,
   authDomain: 'loicm.eu.auth0.com',
   authClientId: 'vGOVyt6oMZ3oBqaCxUf1BBFbeAdfMP2G'
 };

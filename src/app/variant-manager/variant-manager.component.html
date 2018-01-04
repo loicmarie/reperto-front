@@ -59,7 +59,7 @@
         <div *ngIf="variant" class="column is-three-quarters">
           <div class="columns">
             <app-chessboard class="column is-half"
-              (movePlayed)="setActiveMove($event); isNewMove($event) ? addMove($event) : ''"
+              (movePlayed)="handleMovePlayed($event)"
               [(fen)]="fen"
               [flipped]="!variant.color"></app-chessboard>
             <div class="column is-half">
@@ -119,6 +119,7 @@
               <div class="column is-half">
 
                 <button id="delete-variant-button" class="button is-danger is-fullwidth"
+                [ngClass]="{'is-loading': isDeleting}"
                 (click)="deleteVariant(variant)">
                 <span>Delete</span>
                 <span class="icon is-small">
