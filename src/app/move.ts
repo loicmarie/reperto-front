@@ -1,6 +1,7 @@
 export class Move {
   from: string;
   to: string;
+  san: string;
   comment: string;
   promotion: string;
   previousFEN: string;
@@ -13,9 +14,10 @@ export class Move {
   //   'nbSuccess': 0
   // };
 
-  constructor(from: string, to: string, comment: string = '', promotion: string = '', previousFEN: string = '', nextFEN: string = '') {
+  constructor(from: string, to: string, san: string, comment: string = '', promotion: string = '', previousFEN: string = '', nextFEN: string = '') {
     this.from = from;
     this.to = to;
+    this.san = san;
     this.comment = comment;
     this.promotion = promotion;
     this.previousFEN = previousFEN;
@@ -34,6 +36,7 @@ export class Move {
     return {
       'from': this.from,
       'to': this.to,
+      'san': this.san,
       'comment': this.comment,
       'promotion': this.promotion,
       'previousFEN': this.previousFEN,
@@ -45,6 +48,7 @@ export class Move {
     return new Move(
       move['from'],
       move['to'],
+      move['san'],
       move['comment'],
       move['promotion'],
       move['previousFEN'],

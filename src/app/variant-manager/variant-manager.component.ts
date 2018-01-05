@@ -18,7 +18,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class VariantManagerComponent implements OnInit {
 
     startFEN: string = ChessSettings.START_FEN;
-    startMove: Move = new Move('', '', '', '', '', ChessSettings.START_FEN);
+    startMove: Move = new Move('', '', '', '', '', '', ChessSettings.START_FEN);
 
     variants: Variant[];
     variant: Variant;
@@ -117,7 +117,26 @@ export class VariantManagerComponent implements OnInit {
     }
 
     isNewMove(move: Move) {
+      console.log('IS NEW', !this.variant.nodes[move.previousFEN].hasOwnProperty(move.uciNotation));
       return !this.variant.nodes[move.previousFEN].hasOwnProperty(move.uciNotation);
+    }
+
+
+    deleteMove() {
+      this.variant.deleteMove(this.activeMove);
+      this.setPreviousMove();
+    }
+
+    setPreviousMove() {
+      let moves = [];
+      for (let node in this.variant.nodes) {
+        for (let move in this.variant.nodes[node]) {
+          if (this.variant.nodes[node][move].nextFEN == this.activeMove.previousFEN)
+            moves.push(this.variant.nodes[node][move]);
+        }
+      }
+      if (moves.length != 0)
+        this.activeMove = Move.fromObject(moves[0]);
     }
 
     // EVENTS

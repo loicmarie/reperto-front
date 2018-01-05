@@ -8,21 +8,31 @@
   <div class="card-content">
     <div class="content">
 
+      <ng-template #showMoveAnalysis let-score>
+        <span [ngStyle]="score | purcentToRgb">
+          ({{ score  | number : '1.0-0'}}%)
+        </span>
+      </ng-template>
+
       <ng-template #showMove let-move let-depth="depth">
         <span>
+
           <strong *ngIf="(depth+1) % 2 == 0">{{(depth+1)/2}}.</strong>
           <a class="move-notation"
             (click)="editMode ? setActiveMoveFromObject(move['value']) : undefined"
             [class.move-selected]="activeMove ? (move.value['previousFEN'] == activeMove.previousFEN && move.key == activeMove.uciNotation) : false">
-            {{move.key}}
+            {{ move.value['san'] }}
           </a>
-          <span *ngIf="move.value['analysis']">
-            ({{100*move.value['analysis']['nbSuccess']/move.value['analysis']['nbVisits']  | number : '1.0-0'}}%)
-          </span>
+
+          <ng-container *ngIf="move.value['analysis']">
+            <ng-container *ngTemplateOutlet="showMoveAnalysis; context:{ $implicit: 100*move.value['analysis']['nbSuccess']/move.value['analysis']['nbVisits'] }"></ng-container>
+          </ng-container>
+
           <span *ngIf="(activeMove ? (move.value['previousFEN'] == activeMove.previousFEN && move.key == activeMove.uciNotation) : false) ? showNextMoves : true">
             <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: variant.nodes[move.value['nextFEN']], 'depth': depth+1 }"></ng-container>
           </span>
         </span>
+
       </ng-template>
 
       <ng-template #recursiveList let-list let-depth="depth">
@@ -50,19 +60,5 @@
   <div class="card-footer" *ngIf="editMode">
     <a (click)=setPreviousMove() class="button is-info card-footer-item"><i class="fa fa-chevron-left"></i></a>
     <a (click)=setNextMove() class="button is-info card-footer-item"><i class="fa fa-chevron-right"></i></a>
-  </div>
-</div>
-
-<div class="control-buttons columns" *ngIf="editMode">
-  <div class="column is-half">
-    <button class="button is-fullwidth"
-      (click)="deleteMove()">
-      Delete moves
-    </button>
-  </div>
-  <div class="column is-half">
-    <button class="button is-fullwidth" disabled>
-      Set tabia
-    </button>
   </div>
 </div>

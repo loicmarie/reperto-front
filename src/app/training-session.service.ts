@@ -12,7 +12,7 @@ import { ChessboardComponent } from './chessboard/chessboard.component';
 @Injectable()
 export class TrainingSessionService {
 
-  startMove: Move = new Move('', '', '', '', '', ChessSettings.START_FEN);
+  startMove: Move = new Move('', '', '', '', '', '', ChessSettings.START_FEN);
 
   chessboard: ChessboardComponent;
   isSession: Boolean = false;
@@ -54,6 +54,8 @@ export class TrainingSessionService {
   stop() {
     this.reset();
     this.isSession = false;
+    this.discoverRate = 0;
+    this.correctnessRate = 0;
   }
 
   run() {

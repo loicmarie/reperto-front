@@ -27,8 +27,7 @@
       "scripts": [
         "../node_modules/jquery/dist/jquery.min.js",
         "assets/chessboardjs/js/chess.js",
-        "assets/chessboardjs/js/chessboard-0.3.0.min.js",
-        "../node_modules/pgnToJSON/pgnParser.js"
+        "assets/chessboardjs/js/chessboard-0.3.0.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

@@ -66,11 +66,6 @@ export class ChessNotationViewerComponent implements OnInit {
       this.activeMove = Move.fromObject(moves[0]);
   }
 
-  deleteMove() {
-    this.variant.deleteMove(this.activeMove);
-    this.setPreviousMove();
-  }
-
   ngOnInit() {
   }
 

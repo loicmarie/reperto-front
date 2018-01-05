@@ -44,21 +44,37 @@ export class AuthService {
           profile.sub.split('|')[1],
           []
         );
+        console.log('users.getFromUserId');
         return this.userService.getFromUserId(anonymous.userId)
-          .subscribe(userObj => {
-              if (userObj != null) {
-                  this.user = User.fromObject(userObj);
+          .subscribe(user => {
+            console.log('users.getFromUserId', user);
+              if (user != null) {
+                  this.user = user;
                   observer.next(this.user);
               } else {
-                  this.userService.create(User.fromObject(anonymous))
-                    .subscribe(user => {
-                      this.user = user;
-                      observer.next(user);
-                    });
+                  this.createUser(user).subscribe(res => observer.next(res));
               }
           }, error => {
+            console.error(error);
+            console.error('BUT CREATED', anonymous);
+            this.createUser(anonymous).subscribe(res => observer.next(res));
           });
       });
+    });
+  }
+
+  public createUser(anonymous: User) {
+    console.log('createUser', anonymous);
+    return new Observable<User>(observer => {
+      this.userService.create(anonymous)
+        .subscribe(user => {
+          console.log(user);
+          this.user = user;
+          observer.next(user);
+        }, error => {
+          console.error('ARFF', error);
+          observer.next(error);
+        });
     });
   }
 
@@ -78,6 +94,7 @@ export class AuthService {
           // this.router.navigate(['/']);
           return observer.error(err);
         } else {
+          console.log('no auth, no error', this.user);
           // return observer.error(new Error('Session timed out'));
         }
         return observer.next();

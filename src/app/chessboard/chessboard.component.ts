@@ -136,7 +136,6 @@ export class ChessboardComponent {
   }
 
   onDrop(source: string, target: string) {
-    console.log('onDrop', source, target);
     this.removeGreySquares();
 
     // see if the move is legal
@@ -148,7 +147,8 @@ export class ChessboardComponent {
 
     // illegal move
     if (move === null) return 'snapback';
-    this.move = new Move(source, target);
+    console.log("ZEMOVE", move);
+    this.move = new Move(source, target, move.san);
   }
 
   onMouseoverSquare(square: string, piece: string) {
@@ -175,7 +175,6 @@ export class ChessboardComponent {
   }
 
   onSnapEnd() {
-    console.log('SnapEnd');
     this.validateMove();
     this.board.position(this.game.fen());
   }

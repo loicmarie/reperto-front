@@ -39,7 +39,7 @@ export class VariantService {
     // Utils
 
     new(): Observable<Variant> {
-        return this.http.post<Variant>(`/api/variants/`, new Variant());
+        return this.http.post<Object>(`/api/variants/`, new Variant()).map(variant => Variant.fromObject(variant));
     }
 
 }

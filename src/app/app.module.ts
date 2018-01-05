@@ -16,6 +16,7 @@ import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 
 import { KeysPipe } from './keys.pipe';
+import { PurcentToRgbPipe } from './purcent-to-rgb.pipe';
 import { ChessboardComponent } from './chessboard/chessboard.component';
 import { ChessUiComponent } from './chess-ui/chess-ui.component';
 import { DemoComponent } from './demo/demo.component';
@@ -32,6 +33,7 @@ import { FileUploadModule } from 'ng2-file-upload';
     VariantManagerComponent,
     MessagesComponent,
     KeysPipe,
+    PurcentToRgbPipe,
     ChessboardComponent,
     ChessUiComponent,
     DemoComponent,

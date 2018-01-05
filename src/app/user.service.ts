@@ -19,6 +19,7 @@ export class UserService {
     }
 
     create(user: User): Observable<User> {
+        console.log('userService.create', user);
         return this.http.post<User>(`/api/users/`, user.toDB()).map(user => User.fromObject(user));
     }
 
