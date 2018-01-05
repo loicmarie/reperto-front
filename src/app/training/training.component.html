@@ -108,7 +108,7 @@
 
                 <div *ngIf="!trainingSess.moveAnalysis['isError']">
                   <div class="widget">
-                    <span class="is-size-1">{{ trainingSess.lastHumanMove.fromToNotation }} &nbsp;</span>
+                    <span class="is-size-1">{{ trainingSess.lastHumanMove.san }} &nbsp;</span>
                     <span class="icon is-large has-text-primary">
                       <i class="fa fa-check fa-5x"></i>
                     </span>
@@ -129,14 +129,14 @@
 
                 <div *ngIf="trainingSess.solution">
                   <div class="widget">
-                    <span class="is-size-1">{{ trainingSess.lastHumanMove.fromToNotation }} &nbsp;</span>
+                    <span class="is-size-1">{{ trainingSess.lastHumanMove.san }} &nbsp;</span>
                     <span class="icon is-large has-text-danger">
                       <i class="fa fa-times fa-5x"></i>
                     </span>
                   </div>
                   <div class="is-size-3" *ngIf="trainingSess.solution">
                         <span>Move was:</span><br/>
-                        <span><strong>{{ trainingSess.solution.fromToNotation }}</strong></span>
+                        <span><strong>{{ trainingSess.solution.san }}</strong></span>
                         <span>({{100*
                           trainingSess.variant.nodes[trainingSess.solution.previousFEN][trainingSess.solution.uciNotation]['analysis']['nbSuccess']
                           / trainingSess.variant.nodes[trainingSess.solution.previousFEN][trainingSess.solution.uciNotation]['analysis']['nbVisits']
