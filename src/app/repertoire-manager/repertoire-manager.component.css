@@ -1,0 +1,26 @@
+.editable-title {
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+.editable-title:focus {
+    border: none;
+    outline: none;
+}
+
+.title-container {
+    padding: 0 0 40px 20px;
+}
+
+.panel-block.is-active, tr.is-active {
+    background-color: hsl(0, 0%, 94%);
+}
+
+.widget {
+  margin-bottom: 40px;
+}
+
+tr:hover {
+  cursor: pointer;
+}

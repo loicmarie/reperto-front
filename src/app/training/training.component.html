@@ -52,10 +52,15 @@
               <div class="dropdown-content">
                 <a *ngFor="let oneVariant of auth.user.variants" class="dropdown-item"
                   (click)="selectVariant(oneVariant)"
-                  [class.is-active]="oneVariant._id == variant._id">
+                  [class.is-active]="variant && oneVariant._id == variant._id">
                   {{ oneVariant.name }}
                 </a>
-                <!-- <hr class="dropdown-divider"> -->
+                <hr class="dropdown-divider">
+                <a *ngFor="let oneRepertoire of auth.user.repertoires" class="dropdown-item"
+                  (click)="selectRepertoire(oneRepertoire)"
+                  [class.is-active]="repertoire && oneRepertoire._id == repertoire._id">
+                  {{ oneRepertoire.name }}
+                </a>
               </div>
             </div>
           </div>

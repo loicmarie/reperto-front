@@ -2,6 +2,7 @@ export class Move {
   from: string;
   to: string;
   san: string;
+  color: Boolean;
   comment: string;
   promotion: string;
   previousFEN: string;
@@ -9,15 +10,15 @@ export class Move {
 
   // not persistent
   analysis: Object;
-  //  = {
-  //   'nbVisits': 0,
-  //   'nbSuccess': 0
-  // };
 
-  constructor(from: string, to: string, san: string, comment: string = '', promotion: string = '', previousFEN: string = '', nextFEN: string = '') {
+  constructor(from: string, to: string, san: string, color: Boolean, comment: string = '', promotion: string = '',
+    previousFEN: string = '', nextFEN: string = '') {
+
     this.from = from;
     this.to = to;
     this.san = san;
+    console.log('san', san, 'color', color);
+    this.color = color;
     this.comment = comment;
     this.promotion = promotion;
     this.previousFEN = previousFEN;
@@ -37,6 +38,7 @@ export class Move {
       'from': this.from,
       'to': this.to,
       'san': this.san,
+      'color': this.color,
       'comment': this.comment,
       'promotion': this.promotion,
       'previousFEN': this.previousFEN,
@@ -49,6 +51,7 @@ export class Move {
       move['from'],
       move['to'],
       move['san'],
+      move['color'],
       move['comment'],
       move['promotion'],
       move['previousFEN'],

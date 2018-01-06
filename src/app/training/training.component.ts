@@ -1,9 +1,11 @@
 import { Component, ViewChildren, AfterViewInit, QueryList } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { VariantService } from '../variant.service';
 import { ChessSettings } from '../chess.settings';
-import { Variant } from '../variant';
 import { Move } from '../move';
+import { Variant } from '../variant';
+import { VariantService } from '../variant.service';
+import { Repertoire } from '../repertoire';
+import { RepertoireService } from '../repertoire.service';
 import { ChessboardComponent } from '../chessboard/chessboard.component';
 import { TrainingSessionService } from '../training-session.service';
 
@@ -19,6 +21,7 @@ export class TrainingComponent implements AfterViewInit {
 
   constructor(private auth: AuthService,
     private variantService: VariantService,
+    private repertoireService: RepertoireService,
     private trainingSess: TrainingSessionService) {
 
     this.auth.handleAuthentication().subscribe(user => {
@@ -30,6 +33,10 @@ export class TrainingComponent implements AfterViewInit {
     this.variant = variant;
     this.trainingSess.stop();
     this.trainingSess.variant = variant;
+  }
+
+  selectRepertoire(repertoire: Repertoire) {
+    this.selectVariant(repertoire.getSingleVariant());
   }
 
   ngAfterViewInit() {

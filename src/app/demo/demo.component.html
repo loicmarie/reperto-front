@@ -1,3 +1,20 @@
-<p>
-  demo works!
-</p>
+<div class="demo-wrapper">
+  <div class="demo">
+    <section class="title-container">
+      <div class="container has-text-centered">
+        <h1 class="title has-text-light">
+          Reperto
+        </h1>
+        <p class="subtitle has-text-light">
+          Chess Repertoire Trainer
+        </p>
+      </div>
+    </section>
+  </div>
+  <div class="chessboard-demo-wrapper">
+    <div class="chessboard-demo-container">
+      <app-chessboard class="chessboard-demo"
+        [fen]="startFEN"></app-chessboard>
+    </div>
+  </div>
+</div>

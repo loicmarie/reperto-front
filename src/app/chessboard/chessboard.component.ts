@@ -148,7 +148,7 @@ export class ChessboardComponent {
     // illegal move
     if (move === null) return 'snapback';
     console.log("ZEMOVE", move);
-    this.move = new Move(source, target, move.san);
+    this.move = new Move(source, target, move.san, move.color == "w");
   }
 
   onMouseoverSquare(square: string, piece: string) {

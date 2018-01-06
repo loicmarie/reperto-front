@@ -1,4 +1,5 @@
 import { Variant } from './variant';
+import { Repertoire } from './repertoire';
 
 export class User {
   _id: string;
@@ -6,13 +7,15 @@ export class User {
   nickname: string;
   userId: string;
   variants: Variant[];
+  repertoires: Repertoire[];
 
-  constructor(_id: string, name: string, nickname: string, userId: string, variants: Variant[]) {
+  constructor(_id: string, name: string, nickname: string, userId: string, variants: Variant[], repertoires: Repertoire[]) {
     this._id = _id;
     this.name = name;
     this.nickname = nickname;
     this.userId = userId;
     this.variants = variants;
+    this.repertoires = repertoires;
   }
 
   toDB(): Object {
@@ -21,7 +24,8 @@ export class User {
       'name': this.name,
       'nickname': this.nickname,
       'userId': this.userId,
-      'variants': this.variants.map(variant => variant._id)
+      'variants': this.variants.map(variant => variant._id),
+      'repertoires': this.repertoires.map(repertoire => repertoire._id)
     }
   }
 
@@ -31,7 +35,8 @@ export class User {
       userObj['name'],
       userObj['nickname'],
       userObj['userId'],
-      userObj['variants'].map(variantObj => Variant.fromObject(variantObj))
+      userObj['variants'].map(variantObj => Variant.fromObject(variantObj)),
+      userObj['repertoires'].map(repertoireObj => Repertoire.fromObject(repertoireObj))
     );
   }
 }

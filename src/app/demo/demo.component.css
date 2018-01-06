@@ -1,0 +1,43 @@
+.demo-wrapper {
+  position: absolute;
+  background-color: hsl(217, 71%, 53%);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.demo {
+  position: relative;
+  background-color: hsla(217, 71%, 53%, .7);
+  height: 100%;
+  padding: 375px 0 0 0;
+  z-index: 10;
+}
+
+.chessboard-demo-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 180px 0 0 0;
+  z-index: 1;
+}
+
+.chessboard-demo-container {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.chessboard-demo {
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 7em;
+}
+
+.subtitle {
+  font-size: 4em;
+}

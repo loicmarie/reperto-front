@@ -21,6 +21,10 @@ body, input[text], button {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.navbar {
+  z-index: 10;
+}
+
 footer {
   background-color: hsl(0, 0%, 14%);
   color: hsl(0, 0%, 86%);

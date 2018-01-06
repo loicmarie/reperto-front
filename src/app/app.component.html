@@ -30,7 +30,8 @@
     </div>
 
     <div class="navbar-end">
-        <a routerLink="/training" class="navbar-item" [routerLinkActive]="['is-active']">Training</a>
+        <a routerLink="/home" class="navbar-item" [routerLinkActive]="['is-active']">Home</a>
+        <a routerLink="/training" class="navbar-item" [routerLinkActive]="['is-active']" *ngIf="auth.user">Training</a>
         <a routerLink="/variants" class="navbar-item" [routerLinkActive]="['is-active']" *ngIf="auth.user">Variants</a>
         <a routerLink="/repertoires" class="navbar-item" [routerLinkActive]="['is-active']" *ngIf="auth.user">Repertoires</a>
         <span class="navbar-item">

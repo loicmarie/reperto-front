@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { User } from '../user';
+import { ChessSettings } from '../chess.settings';
 
 @Component({
   selector: 'app-demo',
@@ -9,7 +10,7 @@ import { User } from '../user';
 })
 export class DemoComponent implements OnInit {
 
-  user: User;
+  startFEN: string = ChessSettings.START_FEN;
 
   constructor(private auth: AuthService) {
     this.auth.handleAuthentication().subscribe(user => {}, error => {});

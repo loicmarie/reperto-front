@@ -12,6 +12,7 @@ import { AuthService } from './auth.service';
 import { AuthGuardService } from './auth-guard.service';
 import { UserService } from './user.service';
 import { VariantService } from './variant.service';
+import { RepertoireService } from './repertoire.service';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 
@@ -48,7 +49,7 @@ import { FileUploadModule } from 'ng2-file-upload';
     HttpClientModule,
     FileUploadModule
   ],
-  providers: [AuthService, AuthGuardService, UserService, VariantService, MessageService, TrainingSessionService],
+  providers: [AuthService, AuthGuardService, UserService, VariantService, RepertoireService, MessageService, TrainingSessionService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

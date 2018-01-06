@@ -42,6 +42,7 @@ export class AuthService {
           profile.name,
           profile.nickname,
           profile.sub.split('|')[1],
+          [],
           []
         );
         console.log('users.getFromUserId');

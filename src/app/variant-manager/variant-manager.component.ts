@@ -18,7 +18,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class VariantManagerComponent implements OnInit {
 
     startFEN: string = ChessSettings.START_FEN;
-    startMove: Move = new Move('', '', '', '', '', '', ChessSettings.START_FEN);
+    startMove: Move = new Move('', '', '', true, '', '', '', ChessSettings.START_FEN);
 
     variants: Variant[];
     variant: Variant;

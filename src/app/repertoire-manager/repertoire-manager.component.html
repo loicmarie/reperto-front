@@ -1,7 +1,7 @@
 <section class="section" *ngIf="auth.user">
     <div class="columns">
 
-        <div class="column is-one-quarter">
+        <div class="column is-one-third">
             <div *ngIf="repertoire" class="title-container">
               <h2 class="title"><input [(ngModel)]="repertoire.name" class="editable-title title" placeholder="name"></h2>
               <h3 class="subtitle">For {{ repertoire.color ? 'White' : 'Black' }}</h3>
@@ -71,6 +71,74 @@
 
               </div>
             </div>
+
+        </div>
+
+        <div class="column is-one-third">
+
+          <table class="table is-bordered is-hoverable is-fullwidth"
+            *ngIf="repertoire">
+            <thead>
+              <tr>
+                <th>Variant</th>
+                <th>Color</th>
+                <th>Attached</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>Variant</th>
+                <th>Color</th>
+                <th>Attached</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr *ngFor="let variant of variants"
+                [class.is-active]="repertoire.hasVariant(variant)"
+                (click)="repertoire.hasVariant(variant) ? repertoire.removeVariant(variant) : repertoire.addVariant(variant)">
+                <td>{{ variant.name }}</td>
+                <td class="has-text-centered"><i class="fa" [class.fa-square]="!variant.color" [class.fa-square-o]="variant.color"></i></td>
+                <td class="has-text-centered"><i class="fa" [class.fa-check]="repertoire.hasVariant(variant)" [class.fa-times]="!repertoire.hasVariant(variant)"></i></td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div class="column is-one-third">
+
+          <div class="card widget" *ngIf="repertoire">
+            <div class="card-header">
+              <p class="card-header-title">
+                Settings
+              </p>
+            </div>
+            <div class="card-content">
+              <div class="content">
+
+                <div class="field is-horizontal">
+                  <div class="field-label">
+                    <label class="label">Color</label>
+                  </div>
+                  <div class="field-body">
+                    <div class="field is-narrow">
+                      <div class="control">
+                        <label class="radio">
+                          <input type="radio" name="color-button" [(ngModel)]="repertoire.color" [value]=true [checked]="repertoire.color == repertoire.color">
+                          White
+                        </label>
+                        <label class="radio">
+                          <input type="radio" name="color-button" [(ngModel)]="repertoire.color" [value]=false>
+                          Black
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
 
         </div>
 

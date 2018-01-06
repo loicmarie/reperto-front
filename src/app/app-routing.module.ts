@@ -9,7 +9,8 @@ import {
 } from './auth-guard.service';
 
 const routes: Routes = [
-  { path: '', component: DemoComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: DemoComponent },
   {
     path: 'variants',
     component: VariantManagerComponent,
