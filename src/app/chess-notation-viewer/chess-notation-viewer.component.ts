@@ -50,6 +50,7 @@ export class ChessNotationViewerComponent implements OnInit {
   setNextMove() {
     let nodes = this.variant.nodes;
     let moves = Object.keys(nodes[this._activeMove.nextFEN]);
+    console.log('next moves:', moves);
     if (moves.length != 0)
       this.activeMove = Move.fromObject(nodes[this._activeMove.nextFEN][moves[0]]);
   }

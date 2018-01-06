@@ -20,7 +20,7 @@
           <strong *ngIf="(depth+1) % 2 == 0">{{(depth+1)/2}}.</strong>
           <a class="move-notation"
             (click)="editMode ? setActiveMoveFromObject(move['value']) : undefined"
-            [class.move-selected]="activeMove ? (move.value['previousFEN'] == activeMove.previousFEN && move.key == activeMove.uciNotation) : false">
+            [class.move-selected]="activeMove ? (move.value['nextFEN'] == activeMove.nextFEN) : false">
             {{ move.value['san'] }}
           </a>
 

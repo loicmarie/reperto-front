@@ -147,7 +147,8 @@ export class TrainingSessionService {
     if (this.moveAnalysis['isError']) {
       this.lastHumanMove = move;
 
-      this.addFailure(this._lastMove);
+      if (this._lastMove != this.startMove)
+        this.addFailure(this._lastMove);
 
       this.handleVariantError(move);
       // let moveObj = this.variant.nodes[this._lastMove.previousFEN][this._lastMove.uciNotation];
@@ -156,7 +157,9 @@ export class TrainingSessionService {
     } else {
       // let moveObj = this.variant.nodes[move.previousFEN][move.uciNotation];
 
-      this.addSuccess(this._lastMove);
+      if (this._lastMove != this.startMove)
+        this.addSuccess(this._lastMove);
+
       this.lastMove = Move.fromObject(this.variant.nodes[move.previousFEN][move.uciNotation]);
 
       this.addSuccess(move);
