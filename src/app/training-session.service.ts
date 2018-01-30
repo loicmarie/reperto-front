@@ -23,6 +23,7 @@ export class TrainingSessionService {
   solution: Move;
   discoverRate: number = 0;
   correctnessRate: number = 0;
+  movesHist: Move[] = [];
   _lastMove: Move = this.startMove;
   _fen: string = this.startMove.nextFEN;
 
@@ -100,8 +101,8 @@ export class TrainingSessionService {
           console.log('update FATHER', father);
           let fatherVisits = father.hasOwnProperty('analysis') ? father['analysis']['nbVisits'] : 1;
           console.log('rate', m['analysis']['nbSuccess'], m['analysis']['nbVisits'], fatherVisits);
-          successRate = m['analysis']['nbSuccess'] / m['analysis']['nbVisits']
-            - Math.sqrt( 2 * Math.log( fatherVisits / m['analysis']['nbVisits'] ));
+          successRate = m['analysis']['nbSuccess'] / m['analysis']['nbVisits'];
+            // - Math.sqrt( 2 * Math.log( fatherVisits / m['analysis']['nbVisits'] ));
         }
         console.log('TEST', successRate, minSuccessRate);
         if (successRate < minSuccessRate) {
@@ -133,30 +134,37 @@ export class TrainingSessionService {
   }
 
   addFailure(move: Move) {
-    if (this.variant.nodes[move.previousFEN][move.uciNotation].hasOwnProperty('analysis'))
-      this.variant.nodes[move.previousFEN][move.uciNotation]['analysis']['nbVisits']++;
-    else
-      this.variant.nodes[move.previousFEN][move.uciNotation]['analysis'] = {
-        'nbVisits': 1,
-        'nbSuccess': 0
-      };
+    let i = 1;
+    for (let m of this.movesHist) {
+      if (this.variant.nodes[m.previousFEN][m.uciNotation].hasOwnProperty('analysis'))
+        this.variant.nodes[m.previousFEN][m.uciNotation]['analysis']['nbSuccess'] = Math.max(0, this.variant.nodes[m.previousFEN][m.uciNotation]['analysis']['nbSuccess']-i/this.movesHist.length);
+      else
+        this.variant.nodes[m.previousFEN][m.uciNotation]['analysis'] = {
+          'nbVisits': 1,
+          'nbSuccess': 0
+        };
+      i++;
+    }
   }
 
   humanPlayed(move: Move) {
     this.analyzeMove(move);
     if (this.moveAnalysis['isError']) {
       this.lastHumanMove = move;
+      this.movesHist.push(this._lastMove);
 
-      if (this._lastMove != this.startMove)
-        this.addFailure(this._lastMove);
+      // if (this._lastMove != this.startMove)
+      //   this.addFailure(this._lastMove);
 
       this.handleVariantError(move);
       // let moveObj = this.variant.nodes[this._lastMove.previousFEN][this._lastMove.uciNotation];
       this.addFailure(this._lastMove);
+      this.movesHist = [];
 
     } else {
       // let moveObj = this.variant.nodes[move.previousFEN][move.uciNotation];
 
+      this.movesHist.push(this._lastMove);
       if (this._lastMove != this.startMove)
         this.addSuccess(this._lastMove);
 
@@ -166,6 +174,7 @@ export class TrainingSessionService {
 
       this.lastHumanMove = this.lastMove;
       if (this.isEnd()) {
+        this.movesHist = [];
         this.isStopped = true;
         this.updateDiscoverRate();
         this.updateCorrectnessRate();
@@ -177,6 +186,7 @@ export class TrainingSessionService {
     this.updateCorrectnessRate();
 
     if (this.isEnd()) {
+      this.movesHist = [];
       this.isStopped = true;
       return;
     }

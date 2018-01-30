@@ -117,11 +117,11 @@
                     <span class="icon is-large has-text-primary">
                       <i class="fa fa-check fa-5x"></i>
                     </span>
-                    <span class="is-size-3" *ngIf="trainingSess.lastHumanMove">
+                    <!-- <span class="is-size-3" *ngIf="trainingSess.lastHumanMove">
                       ({{100*
                       trainingSess.variant.nodes[trainingSess.lastHumanMove.previousFEN][trainingSess.lastHumanMove.uciNotation]['analysis']['nbSuccess']
                       / trainingSess.variant.nodes[trainingSess.lastHumanMove.previousFEN][trainingSess.lastHumanMove.uciNotation]['analysis']['nbVisits']
-                      | number : '1.0-0'}}%)</span>
+                      | number : '1.0-0'}}%)</span> -->
                   </div>
                   <!-- <div class="card">
                     <div class="card-content">
@@ -142,10 +142,10 @@
                   <div class="is-size-3" *ngIf="trainingSess.solution">
                         <span>Move was:</span><br/>
                         <span><strong>{{ trainingSess.solution.san }}</strong></span>
-                        <span>({{100*
+                        <!-- <span>({{100*
                           trainingSess.variant.nodes[trainingSess.solution.previousFEN][trainingSess.solution.uciNotation]['analysis']['nbSuccess']
                           / trainingSess.variant.nodes[trainingSess.solution.previousFEN][trainingSess.solution.uciNotation]['analysis']['nbVisits']
-                          | number : '1.0-0'}}%)</span>
+                          | number : '1.0-0'}}%)</span> -->
                   </div>
                 </div>
 
